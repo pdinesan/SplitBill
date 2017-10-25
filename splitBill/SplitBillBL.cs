@@ -15,14 +15,19 @@ namespace splitBill
 
     public class SplitBillBL
     {
-
+       /*
+        * Read input file and return file contents excluding blank rows
+        */
         public string[] readExpenseFile(string fileName)
         {
             var arrExpenses = File.ReadAllLines(Environment.CurrentDirectory + "/" + fileName);
-            arrExpenses = arrExpenses.Where(exp => !string.IsNullOrEmpty(exp)).ToArray();
+            arrExpenses = arrExpenses.Where(exp => !string.IsNullOrEmpty(exp)).ToArray(); // Get rid of any empty lines
             return arrExpenses;
         }
         
+        /*
+         * Main method for processing expenses and writing output 
+         */
         public string splitAllBills(string[] arrExpenses, string fileName)
         {
             int currlineIndex = 0;
@@ -52,14 +57,14 @@ namespace splitBill
             decimal totalExpenseForTrip = 0;
             decimal sharePerPerson = 0;
 
-            for (int i = 0; i < participants.Count(); i++)
+            for (int partcipIndex = 0; partcipIndex < participants.Count(); partcipIndex++)
             {
-                totalExpenseForTrip = totalExpenseForTrip + participants[i].expenses;
+                totalExpenseForTrip = totalExpenseForTrip + participants[partcipIndex].expenses;
             }
             sharePerPerson = totalExpenseForTrip / participants.Count();
-            for (int i = 0; i < participants.Count(); i++)
+            for (int partcipIndex = 0; partcipIndex < participants.Count(); partcipIndex++)
             {
-                participants[i].pending = Math.Round((sharePerPerson - participants[i].expenses), 2);
+                participants[partcipIndex].pending = Math.Round((sharePerPerson - participants[partcipIndex].expenses), 2);
             }
         }
 
@@ -69,16 +74,16 @@ namespace splitBill
             int expCount = 0;
             decimal totalExp = 0;
             Participants[] part = new Participants[partCount];
-            for (int i = 0; i < partCount; i++)
+            for (int partcipIndex = 0; partcipIndex < partCount; partcipIndex++)
             {
                 curreLineIndex++;
                 expCount = Convert.ToInt32(arrExpenses[curreLineIndex]);
-                for (int j = 0; j < expCount; j++)
+                for (int expenseIndex = 0; expenseIndex < expCount; expenseIndex++)
                 {
                     curreLineIndex++;
                     totalExp = totalExp + Convert.ToDecimal(arrExpenses[curreLineIndex]);
                 }
-                part[i].expenses = totalExp;
+                part[partcipIndex].expenses = totalExp;
                 totalExp = 0;
             }
 
@@ -91,12 +96,12 @@ namespace splitBill
             StringBuilder strOut = new StringBuilder();
             foreach (Participants[] part in participants)
             {
-                for (int i = 0; i < part.Count(); i++)
+                for (int partcipIndex = 0; partcipIndex < part.Count(); partcipIndex++)
                 {
-                    if (part[i].pending < 0)
-                        strOut.Append("($" + Math.Abs(part[i].pending) + ")" + Environment.NewLine);
+                    if (part[partcipIndex].pending < 0)
+                        strOut.Append("($" + Math.Abs(part[partcipIndex].pending) + ")" + Environment.NewLine);
                     else
-                        strOut.Append("$" + part[i].pending + Environment.NewLine);
+                        strOut.Append("$" + part[partcipIndex].pending + Environment.NewLine);
                 }
                 strOut.Append(Environment.NewLine);
             }
@@ -104,7 +109,9 @@ namespace splitBill
             using (StreamWriter outputFile = new StreamWriter(Environment.CurrentDirectory + "/" + fileName + ".out"))
             {
                 outputFile.WriteLine(Convert.ToString(strOut).TrimEnd());
+                Console.WriteLine("Output file generated - " + Environment.CurrentDirectory + "\\" + fileName + ".out");
             }
+                       
 
             return Convert.ToString(strOut).TrimEnd();
 

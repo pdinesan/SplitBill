@@ -11,17 +11,30 @@ namespace splitBill
     {
         static void Main(string[] args)
         {
-            Console.Write("Enter Expenses File Name ( eg: Expenses.txt ): ");
-            string fileName = Console.ReadLine();
+            // Get input file name from user
+            //Console.Write("Enter Expenses File Name ( eg: Expenses.txt ): ");
+
+            string fileName = "";
+            if (args.Length == 1)
+            {
+                fileName = args[0];
+            }
+            else
+            {
+                Console.WriteLine("Expecting file name as argument.");
+            }
 
             try {
 
                 SplitBillBL oSplitBillBL = new SplitBillBL();
 
-                //Read input file
-                var arrExpenses = oSplitBillBL.readExpenseFile(fileName);                
+                //Read contents from input file
+                var arrExpenses = oSplitBillBL.readExpenseFile(fileName);  
+                
+                //Process the file and generate output
                 oSplitBillBL.splitAllBills(arrExpenses, fileName);
-                Console.WriteLine("Output file generated.");
+
+                
 
             }
             catch(FileNotFoundException filenotfound)
@@ -35,8 +48,5 @@ namespace splitBill
 
            Console.ReadKey();            
         }
-
-       
-       
     }   
 }
